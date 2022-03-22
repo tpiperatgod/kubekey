@@ -163,6 +163,7 @@ var (
 		"iptables -X",
 		"iptables -F -t nat",
 		"iptables -X -t nat",
+		"ipvsadm -C",
 		"ip link del kube-ipvs0",
 		"ip link del nodelocaldns",
 	}
@@ -173,7 +174,9 @@ type ResetNetworkConfig struct {
 }
 
 func (r *ResetNetworkConfig) Execute(runtime connector.Runtime) error {
-	_, _ = runtime.GetRunner().SudoCmd(strings.Join(networkResetCmds, " && "), true)
+	for _, cmd := range networkResetCmds {
+		_, _ = runtime.GetRunner().SudoCmd(cmd, true)
+	}
 	return nil
 }
 
